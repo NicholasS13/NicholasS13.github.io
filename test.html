@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hidden Form Example</title>
+    <style>
+        /* Hide the form */
+        #hiddenForm {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hidden Form Example</h1>
+    
+    <!-- Hidden Form -->
+    <form id="hiddenForm" action="/submit" method="POST">
+        <input type="text" id="name" name="name">
+        <input type="email" id="email" name="email">
+        <input type="submit" value="Submit">
+    </form>
+
+    <button onclick="fillAndSubmitForm()">Fill and Submit Form</button>
+    <button onclick="sendData(42)">Send Sensor Data</button> <!-- Button to send sensor data -->
+
+    <script>
+        let devID = -1; // Initialize devID
+
+        async function sendData(x) {
+            const BASE_URL = 'https://awaited-definite-cockatoo.ngrok-free.app';
+            console.log(x);
+            try {
+                const response = await fetch(`${BASE_URL}/sendSensorValues`, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        deviceID: devID,
+                        sensorValue: x,
+                    }),
+                });
+                const data = await response.json();
+                console.log({ data });
+                if (devID === -1) {
+                    devID = data['deviceID'];
+                    console.log(devID);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        function fillAndSubmitForm() {
+            // Fill in the form inputs
+            document.getElementById('name').value = 'John Doe';
+            document.getElementById('email').value = 'john.doe@example.com';
+
+            // Submit the form
+            document.getElementById('hiddenForm').submit();
+        }
+    </script>
+</body>
+</html>
